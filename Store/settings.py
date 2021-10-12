@@ -106,12 +106,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 AUTH_USER_MODEL = 'accounts.User'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = False
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'phone'
-# USER_DETAILS_SERIALIZER = UserSerializer
-USER_DETAILS_SERIALIZER = 'rest_auth.views.UserDetailsView' 
 
 AUTH_PASSWORD_VALIDATORS = [
     {

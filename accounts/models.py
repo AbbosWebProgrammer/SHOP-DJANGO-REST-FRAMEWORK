@@ -13,7 +13,7 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have an phone address')
 
         user = self.model(
-            phone=self.normalize_email(phone),
+            phone=self.phone,
         )
 
         user.set_password(password)

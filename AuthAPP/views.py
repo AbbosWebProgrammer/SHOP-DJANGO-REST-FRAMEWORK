@@ -1,14 +1,14 @@
-from rest_framework.authtoken.serializers import AuthTokenSerializer
+# from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import generics, permissions
 from rest_framework.response import Response
+from rest_framework import status
 from django.contrib.auth import login
 from rest_framework import viewsets
 from knox.models import AuthToken
 from .serializer import * 
 from random import choice
 import requests
-
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = UserSerializer
@@ -32,6 +32,48 @@ class LoginAPI(KnoxLoginView):
         login(request, user)
 
         return super(LoginAPI, self).post(request, format=None)
+# class UserAPI(generics.RetrieveAPIView):
+#     permission_classes = [permissions.IsAuthenticated,]
+#     serializer_class = UserSerializer
+
+#     def get_object(self):
+#         return self.request.user
+
+
+# class ChangePasswordView(generics.UpdateAPIView):
+#     """
+#     An endpoint for changing password.
+#     """
+#     serializer_class = ChangePasswordSerializer
+#     model = User
+#     permission_classes = (permissions.IsAuthenticated,)
+
+#     def get_object(self, queryset=None):
+#         obj = self.request.user
+#         return obj
+
+#     def update(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         serializer = self.get_serializer(data=request.data)
+
+#         if serializer.is_valid():
+#             # Check old password
+#             if not self.object.check_password(serializer.data.get("old_password")):
+#                 return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+#             # set_password also hashes the password that the user will get
+#             self.object.set_password(serializer.data.get("new_password"))
+#             self.object.save()
+#             response = {
+#                 'status': 'success',
+#                 'code': status.HTTP_200_OK,
+#                 'message': 'Password updated successfully',
+#                 'data': []
+#             }
+
+#             return Response(response)
+
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class ClientphoneView(generics.GenericAPIView):
@@ -122,6 +164,32 @@ class Order_detailsByOrderIdView(viewsets.ModelViewSet):
         ordd = self.queryset.filter(order=id)
         serializer = self.get_serializer(ordd,many=True)
         return Response(serializer.data)
+
+class OrdersByDayView(viewsets.ModelViewSet):
+    queryset=Orders.objects.all()
+    serializer_class= Ordersserializers
+    def list(self, request, *args, **kwargs):
+        serializer=self.get_serializer(self.queryset,many=True)
+        orders=[]
+        for order in serializer.data:
+            articles = Orders.objects.filter(order=order["id"])
+            art = []
+            for a in articles:
+                article={
+                    'name':a.name
+                }
+                art.append(article)
+
+            d={
+                "id":order["id"],
+                "level":order["level"],
+                "faculty":order["facully"],
+                
+            }
+            orders.append(d)
+
+        return Response({'orders':orders})
+
 
 class QuestionView(viewsets.ModelViewSet):
     queryset=Question.objects.all()

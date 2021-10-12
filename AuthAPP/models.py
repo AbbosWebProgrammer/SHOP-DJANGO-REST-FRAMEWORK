@@ -37,8 +37,8 @@ class CustomerLike(models.Model):
 class Customercard(models.Model):
     user = models.ForeignKey(User, on_delete= models.CASCADE)
     product = models.ForeignKey(Products,on_delete=models.CASCADE)
-    # productscolor = models.ForeignKey(ProductsColor,on_delete=models.CASCADE)
-    # productsize = models.ForeignKey(ProductSize,on_delete=models.CASCADE)
+    productscolor = models.ForeignKey(ProductsColor,on_delete=models.CASCADE)
+    productsize = models.ForeignKey(ProductSize,on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1,null=True)
     date = models.DateTimeField(auto_now_add=True)
 
@@ -61,8 +61,8 @@ class Orders(models.Model):
 class Order_details(models.Model):
     product = models.ForeignKey(Products,on_delete=models.CASCADE)
     order = models.ForeignKey(Orders,on_delete=models.CASCADE)
-    # productscolor = models.ForeignKey(ProductsColor,on_delete=models.CASCADE)
-    # productsize = models.ForeignKey(ProductSize,on_delete=models.CASCADE)
+    productscolor = models.ForeignKey(ProductsColor,on_delete=models.CASCADE)
+    productsize = models.ForeignKey(ProductSize,on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1,null=True)
     @property
     def total(self):
