@@ -13,8 +13,21 @@ class Subcategory(models.Model):
     description = models.CharField(max_length=200,null=True)
     def __str__(self):
         return f"{self.category.category_name} <=> {self.subcategory_name}"
+
+class Brand(models.Model):
+    name = models.CharField(max_length=200,null=False)
+    description = models.CharField(max_length=1000,null=True)
+    logo = models.ImageField()
+    @property
+    def imageURL(self):
+        try:
+            return self.image.url
+        except:
+            return ''
+
 class Products(models.Model):
     subcategory = models.ForeignKey(Subcategory,on_delete=models.CASCADE)
+    brand=models.ForeignKey(Brand,on_delete=models.CASCADE)
     name = models.CharField(max_length=200,null=False)
     price = models.FloatField(default=0,null=True)
     discounts = models.DecimalField(decimal_places=0, max_digits=100)

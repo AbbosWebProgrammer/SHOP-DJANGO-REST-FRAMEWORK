@@ -30,6 +30,7 @@ urlpatterns = [
     path('login/', LoginAPI.as_view(), name='login'),
     path('logout/', knox_views.LogoutView.as_view(), name='logout'),
     path('register/',RegisterAPI.as_view(),name='register'),
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('sendphonenumberpassword/',ClientphoneView.as_view(),name='sendphonenumberpassword'),
     path('customerphonecheck/',ClientphonecheckView.as_view(),name='customerphonecheck'),
     path('api/', include(router.urls)),
