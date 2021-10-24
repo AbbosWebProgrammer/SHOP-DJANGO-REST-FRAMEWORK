@@ -178,7 +178,7 @@ class OrdersView(viewsets.ModelViewSet):
                 "date":pd.to_datetime(order["order_date"]).strftime("%m/%d/%Y, %H:%M:%S"),
 
             }
-        orders.append(d)
+            orders.append(d)
 
         return Response({'orders':orders})
 
