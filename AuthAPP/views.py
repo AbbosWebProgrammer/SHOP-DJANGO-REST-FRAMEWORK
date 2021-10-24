@@ -7,9 +7,9 @@ from django.contrib.auth import login
 from rest_framework import viewsets
 from knox.models import AuthToken
 from .serializer import * 
+from AuthAPP.models import Location
 from random import choice
 import requests
-
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = UserSerializer
     def post(self, request, *args, **kwargs):
@@ -85,8 +85,17 @@ class ClientphoneView(generics.GenericAPIView):
                 )
         obj.smscode=password
         obj.save()
-        self.sendphonepasswod(phone[1:],password)
-        return Response({'Message':"Password yuborildi"})
+        k=self.sendphonepasswod(phone[1:],password)
+        print(k)
+        # k=dict(k)
+        # print("waiting")
+        if "waiting" in str(k):  
+            return Response({"message":"Password yuborildi."})
+        else:
+            return Response({"message":"Password yuborilmadi."})
+
+
+
     def sendphonepasswod(self,phone,password):
         url = "http://notify.eskiz.uz/api/message/sms/send"
         payload={'mobile_phone': f'{phone}',
@@ -98,7 +107,7 @@ class ClientphoneView(generics.GenericAPIView):
         'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9ub3RpZnkuZXNraXoudXpcL2FwaVwvYXV0aFwvbG9naW4iLCJpYXQiOjE2MzMyNjE2NzQsImV4cCI6MTYzNTg1MzY3NCwibmJmIjoxNjMzMjYxNjc0LCJqdGkiOiJNUzIyRGlHR2oyTUFmZ080Iiwic3ViIjo1MDgsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.VePvxptsCisc9HmRMwFOoPtaPDK-3AnvXNyDjt-YoRU'
         }
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
-        print(response.text)
+        return response.text
     def generate_code(self):
         numbers=list('1234567890')
         chars=list('abcdefghijklmnopqrstuvwxyz')
@@ -148,6 +157,35 @@ class CustomercardView(viewsets.ModelViewSet):
 class OrdersView(viewsets.ModelViewSet):
     queryset=Orders.objects.all()
     serializer_class= Ordersserializers
+    def list(self, request, *args, **kwargs):
+        serializer=self.get_serializer(self.queryset,many=True)
+        orders=[]
+        for order in serializer.data:
+            userid=order['user']
+            user=User.objects.get(id=userid)
+
+            loc=order["location"]
+            location=Location.objects.get(id=loc)
+            lat=location.latitude
+            lang=location.longitude
+            
+
+            d={
+                "id":order["id"],
+                "user":str(user.phone),
+                "location":f'''{lat}:{lang}''',
+                "status":order["status"],
+                "date":pd.to_datetime(order["order_date"]).strftime("%m/%d/%Y, %H:%M:%S"),
+
+            }
+        orders.append(d)
+
+        return Response({'orders':orders})
+
+            
+
+
+
 class Order_detailsView(viewsets.ModelViewSet):
     queryset=Order_details.objects.all()
     serializer_class= Order_detailsserializers
@@ -163,27 +201,7 @@ class Order_detailsByOrderIdView(viewsets.ModelViewSet):
 class OrdersByDayView(viewsets.ModelViewSet):
     queryset=Orders.objects.all()
     serializer_class= Ordersserializers
-    def list(self, request, *args, **kwargs):
-        serializer=self.get_serializer(self.queryset,many=True)
-        orders=[]
-        for order in serializer.data:
-            articles = Orders.objects.filter(order=order["id"])
-            art = []
-            for a in articles:
-                article={
-                    'name':a.name
-                }
-                art.append(article)
 
-            d={
-                "id":order["id"],
-                "level":order["level"],
-                "faculty":order["facully"],
-                
-            }
-            orders.append(d)
-
-        return Response({'orders':orders})
 
 
 class QuestionView(viewsets.ModelViewSet):

@@ -6,6 +6,7 @@ from AuthAPP.views import *
 router = routers.DefaultRouter()
 router.register(r'Category',CategoryView,basename='Category')
 router.register(r'Subcategory',SubcategoryView,basename='Subcategory')
+router.register(r'Brand',BrandView,basename='Brand')
 router.register(r'Products',ProductsView,basename='Products')
 router.register(r'ProductColor',ProductColorView,basename='ProductColor')
 router.register(r'Imagefiles',ImagefilesView,basename='Imagefiles')

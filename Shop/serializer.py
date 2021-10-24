@@ -9,6 +9,10 @@ class SubcategorySerializer(serializers.ModelSerializer):
     class Meta:
         model= Subcategory 
         fields="__all__"
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Brand 
+        fields="__all__"
 class ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model= Products

@@ -2,10 +2,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+import  pandas as pd
 from Shop.models import *
-from django.contrib.auth import get_user_model
-User = get_user_model()
-    
+from django.conf import settings
+User=settings.AUTH_USER_MODEL
 class Phonesmscodecheck(models.Model):
     phone = PhoneNumberField(unique=True)
     smscode = models.CharField(max_length=6,null=False)
@@ -44,7 +44,7 @@ class Customercard(models.Model):
 
 
 class Orders(models.Model):
-    user = models.ForeignKey(User, on_delete= models.CASCADE)
+    user = models.ForeignKey(User,related_name="phoneW", on_delete= models.CASCADE)
     location = models.ForeignKey(Location,on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
     status = {
@@ -59,8 +59,8 @@ class Orders(models.Model):
     def __str__(self):
         return f"{self.user.phone} <=> {self.order_date}"
 class Order_details(models.Model):
-    product = models.ForeignKey(Products,on_delete=models.CASCADE)
     order = models.ForeignKey(Orders,on_delete=models.CASCADE)
+    product = models.ForeignKey(Products,on_delete=models.CASCADE)
     productscolor = models.ForeignKey(ProductsColor,on_delete=models.CASCADE)
     productsize = models.ForeignKey(ProductSize,on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1,null=True)

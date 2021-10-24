@@ -85,7 +85,7 @@ class Customerserializers(serializers.ModelSerializer):
 class Locationserializers(serializers.ModelSerializer):
     class Meta:
         model= Location
-        fields=["customer","latitude","longitude"]
+        fields=["user","latitude","longitude"]
 
 class CustomerLikeserializers(serializers.ModelSerializer):
     class Meta:

@@ -18,6 +18,9 @@ class CategoryView(viewsets.ModelViewSet):
 class SubcategoryView(viewsets.ModelViewSet):
     queryset=Subcategory.objects.all()
     serializer_class=SubcategorySerializer
+class BrandView(viewsets.ModelViewSet):
+    queryset=Brand.objects.all()
+    serializer_class=BrandSerializer
 
 class ProductsView(viewsets.ModelViewSet):
     queryset=Products.objects.all()
