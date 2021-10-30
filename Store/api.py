@@ -1,9 +1,11 @@
 from rest_framework import routers
 from Shop.views import *
 from AuthAPP.views import *
+from accounts.views import *
 
 
 router = routers.DefaultRouter()
+
 router.register(r'Category',CategoryView,basename='Category')
 router.register(r'Subcategory',SubcategoryView,basename='Subcategory')
 router.register(r'Brand',BrandView,basename='Brand')
@@ -26,7 +28,7 @@ router.register(r'ProductParamsCaptionByProductId',ProductParamsCaptionByProduct
 router.register(r'ProductParamsCaptionitemsByProductParamsCaptionId',ProductParamsCaptionitemsByProductParamsCaptionIdView,basename='ProductParamsCaptionitemsByProductParamsCaptionId')
 
 
-router.register(r'Customer',CustomerView,basename='Customer')
+router.register(r'User',UserView,basename='User')
 router.register(r'Location',LocationView,basename='Location')
 router.register(r'CustomerLike',CustomerLikeView,basename='CustomerLike')
 router.register(r'Customercard',CustomercardView,basename='Customercard')
@@ -39,13 +41,10 @@ router.register(r'Review',ReviewView,basename='Review')
 router.register(r'ImagesReview',ImagesReviewView,basename='ImagesReview')
 
 
+router.register(r'Main_page_promo',Main_page_promoView,basename='Main_page_promo')
+router.register(r'Main_page_banner',Main_page_bannerView,basename='Main_page_banner')
+router.register(r'XitProducts',XitProductSView,basename='XitProducts')
 
-
-
-
-
-
-router.register(r'DateForProductPageById',DateForProductPageByIdView,basename='DateForProductPageById')
 
 
 

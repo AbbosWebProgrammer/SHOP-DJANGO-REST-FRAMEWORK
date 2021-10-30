@@ -13,6 +13,8 @@ admin.site.register(ProductsColor)
 admin.site.register(ProductSize)
 admin.site.register(Imagefiles)
 
+admin.site.register(Main_page_banner)
+admin.site.register(Main_page_promo)
 
 
 

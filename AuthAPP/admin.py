@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import *
 admin.site.register(Phonesmscodecheck)
-admin.site.register(Customer)
 admin.site.register(Customercard)
 admin.site.register(Location)
 admin.site.register(CustomerLike)

@@ -10,7 +10,7 @@ class UserManager(BaseUserManager):
         Creates and saves a User with the given phone and password.
         """
         if not phone:
-            raise ValueError('Users must have an phone address')
+            raise ValueError('Users must have a phone')
 
         user = self.model(
             phone=phone,
@@ -47,10 +47,13 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     phone = PhoneNumberField(_('phone'), unique=True)
     is_active = models.BooleanField(default=True)
-    staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser
+    staff = models.BooleanField(default=False) # a admin user; non super-user
+    username = models.CharField(max_length=100,null=True,blank=True)
+    email = models.EmailField(null=True, blank=True)
+    birthday=models.DateField(null=True)
 
-    # notice the absence of a "Password field", that is built in.
+ 
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = [] # Email & Password are required by default.

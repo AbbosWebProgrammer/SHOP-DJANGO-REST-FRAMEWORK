@@ -5,14 +5,14 @@ class Category(models.Model):
     description = models.CharField(max_length=200,null=True)
     views=models.IntegerField(null=True,default=0)
     def __str__(self):
-        return self.category_name
+        return str(self.category_name)
 class Subcategory(models.Model):
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     subcategory_name = models.CharField(max_length = 50,null=False)
     views=models.IntegerField(null=True,default=0)
     description = models.CharField(max_length=200,null=True)
     def __str__(self):
-        return f"{self.category.category_name} <=> {self.subcategory_name}"
+        return str(self.subcategory_name)
 
 class Brand(models.Model):
     name = models.CharField(max_length=200,null=False)
@@ -24,6 +24,8 @@ class Brand(models.Model):
             return self.image.url
         except:
             return ''
+    def __str__(self):
+        return str(self.name)
 
 class Products(models.Model):
     subcategory = models.ForeignKey(Subcategory,on_delete=models.CASCADE)
@@ -36,7 +38,7 @@ class Products(models.Model):
     buy_quantity= models.IntegerField(default=3,)
     date = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return f"{self.subcategory.subcategory_name}||{self.name}"
+        return str(self.name)
 
 class Descproduct(models.Model):
     product = models.ForeignKey(Products,on_delete=models.CASCADE)
@@ -44,14 +46,14 @@ class Descproduct(models.Model):
     description= models.CharField(max_length=600)
     date_time=models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class ProductsColor(models.Model):
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     colorname=models.CharField(max_length=100,default=None)
     def __str__(self):
-        return f"{self.product.subcategory.subcategory_name} <||> {self.product.name} <||> {self.colorname}"
+        return str(self.colorname)
 
 class ProductSize(models.Model):
     productscolor = models.ForeignKey(ProductsColor,on_delete=models.CASCADE)
@@ -74,7 +76,7 @@ class ProductParamsCaption(models.Model):
     product=models.ForeignKey(Products,on_delete=models.CASCADE)
     captionname=models.CharField(max_length=100,null=False)
     def __str__(self):
-        return self.captionname
+        return str(self.captionname)
 
 class ProductParamsCaptionitems(models.Model):
     productparamscaption=models.ForeignKey(ProductParamsCaption,on_delete=models.CASCADE)
@@ -82,5 +84,37 @@ class ProductParamsCaptionitems(models.Model):
     paramscelldecor=models.CharField(max_length=100,null=False)
     def __str__(self):
         return self.paramscell
+
+
+
+class Main_page_promo(models.Model):
+    name=models.CharField(max_length=200,null=False)
+    brand=models.ForeignKey(Brand,on_delete=models.CASCADE)
+    image = models.ImageField()
+    @property
+    def imageURL(self):
+        try:
+            return self.image.url
+        except:
+            return ''
+    def __str__(self):
+        return self.brand.name
+
+class Main_page_banner(models.Model):
+    name=models.CharField(max_length=200,null=False)
+    brand=models.ForeignKey(Brand,on_delete=models.CASCADE)
+    image = models.ImageField()
+    @property
+    def imageURL(self):
+        try:
+            return self.image.url
+        except:
+            return ''
+    def __str__(self):
+        return self.brand.name
+
+
+
+
 
 

@@ -10,12 +10,12 @@ User = get_user_model()
 admin.site.unregister(Group)
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ['phone', 'admin']
+    list_display = ['phone', 'admin','staff']
     list_filter = ['admin']
     fieldsets = (
         (None, {'fields': ('phone', 'password')}),
-        ('Personal info', {'fields': ()}),
-        ('Permissions', {'fields': ('admin',)}),
+        ('Personal info', {'fields': ('username','email','birthday')}),
+        ('Permissions', {'fields': ('admin','staff')}),
     )
     add_fieldsets = (
         (None, {

@@ -138,32 +138,94 @@ class DateForProductPageByIdView(viewsets.ModelViewSet):
     queryset=Products.objects.all()
     serializer_class=ProductsSerializer
 
+class Main_page_promoView(viewsets.ModelViewSet):
+    queryset=Main_page_promo.objects.all()
+    serializer_class=Main_page_promoserializers
+
+class Main_page_bannerView(viewsets.ModelViewSet):
+    queryset=Main_page_banner.objects.all()
+    serializer_class=Main_page_promoserializers
 
 
-class ProductscreateView(viewsets.ModelViewSet):
-    queryset = ProductsColor.objects.all()
-    serializer_class = CreateProductsSerializer
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            data = serializer.validated_data
-            print(data)
-            product = Products.objects.create(
-                subcategory=data['user']['subcategory'],
-                name=data['user']['name'],
-                price=data['user']['price'],
-                discounts=data['user']['discounts'],
-                oldprice=data['user']['oldprice'],
-                delivery=data['user']['delivery'],
-            )
-            product.save()
-            productcolor = ProductsColor.objects.create(
-                productcolor=product,
-                colorname = data['colorname'],
-            )
-            productcolor.save()
-            return Response({'status':'created'},status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class XitProductSView(viewsets.ModelViewSet):
+    queryset=Products.objects.all()
+    serializer_class=ProductsSerializer
+    def list(self, request, *args, **kwargs):
+        product = self.queryset.order_by('-buy_quantity')
+        serializer=self.get_serializer(product,many=True)
+        xitproducts=[]
+        for products in serializer.data:
+            product=Products.objects.get(id=products['id'])
+            productcolor=ProductsColor.objects.filter( product=products['id'])
+            productcolor=productcolor[0]
+            productimage=Imagefiles.objects.filter(productscolor=productcolor.id)
+            productimage=productimage[0]            
+        
+            d={
+                'id':product.id,
+                'product': str(product.name),
+                'buy_quantity': str(product.buy_quantity),
+                'brand':f'''{product.brand}''',
+                'image':productimage.imageURL,
+                'alt':productimage.alt,
+                'price':product.price,
+                'discounts':product.discounts,
+                'oldprice':product.oldprice,
+                
+            }
+
+            xitproducts.append(d)
+        return Response({'products':xitproducts})
+    
+    
+    
+    
+    # def retrieve(self, request, *args, **kwargs):
+    #     id = kwargs['pk']
+    #     orderd = self.queryset.filter(id=id)
+    #     serializer = self.get_serializer(orderd,many=True)
+    #     ordd = serializer.data
+    #     ordd=ordd[0]
+
+    #     order_detail=[]
+    #     orderdetail=Order_details.objects.get(id=ordd['id'])
+    #     d={
+    #         'id':orderdetail.id,
+    #         'order': f'''{orderdetail.order.user}''',
+    #         'category':f'''{orderdetail.productscolor.colorname}''',
+    #         'subcategory':f'''{orderdetail.product.subcategory}''',
+    #         'brand':f'''{orderdetail.product.brand}''',
+    #         'product': orderdetail.product.name,
+    #         'productscolor':orderdetail.productscolor.colorname,
+    #         'productsize': orderdetail.productsize.size,
+    #         'quantity': orderdetail.quantity,
+    #         'day': orderdetail.order.day,
+    #         'time': orderdetail.order.time,
+    #     }
+
+    #     order_detail.append(d)
+    #     return Response({'order_detail':order_detail})
+#  def create(self, request, *args, **kwargs):
+    #         serializer = self.get_serializer(data=request.data)
+#         if serializer.is_valid(raise_exception=True):
+#             data = serializer.validated_data
+#             print(data)
+#             product = Products.objects.create(
+#                 subcategory=data['user']['subcategory'],
+#                 name=data['user']['name'],
+#                 price=data['user']['price'],
+#                 discounts=data['user']['discounts'],
+#                 oldprice=data['user']['oldprice'],
+#                 delivery=data['user']['delivery'],
+#             )
+#             product.save()
+#             productcolor = ProductsColor.objects.create(
+#                 productcolor=product,
+#                 colorname = data['colorname'],
+#             )
+#             productcolor.save()
+#             return Response({'status':'created'},status=status.HTTP_201_CREATED)
+#         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 #     def update(self, request, *args, **kwargs):
 #         print('update..')
 #         id = kwargs['pk']
@@ -175,17 +237,7 @@ class ProductscreateView(viewsets.ModelViewSet):
 #             print(data)
 #             if data['user']['first_name']:
 #                 user.first_name = data['user']['first_name']
-#             if data['user']['last_name']:
-#                 user.last_name = data['user']['last_name']
-#             if data['user']['username']:
-#                 user.username = data['user']['username']
-#             if data['user']['password']:
-#                 user.password = data['user']['password']
-#             if data['user']['email']:
-#                 user.email = data['user']['email']
-#             user.save()
-#             if data['phone']:
-#                 emp.phone = data['phone']
+#            
 #             if data['image']:
 #                 emp.image = data['image']
 #             if data['address']:
@@ -200,46 +252,3 @@ class ProductscreateView(viewsets.ModelViewSet):
 #         return Response({'status':'OK'})
 
 
-
-
-
-
-#     # def retrieve(self, request, *args, **kwargs):
-#     #     id= kwargs['pk']
-#     #     product = self.queryset.filter(id=id)
-#     #     productserializer = self.get_serializer(product,many=True)
-#     #     productdate = productserializer.data 
-
-#         # data = []        
-#         # data.append({"product":productdate})
-#         # image=Imagefiles.objects.filter(product=productdate[0]["id"])
-#         # imagesserializer = ImagefilesSerializer(image,many=True)
-#         # imagesdate= imagesserializer.data
-#         # data.append({"images":imagesdate})
-#         # strukture=Strukture.objects.filter(product=productdate[0]["id"])
-#         # struktureserializer = StruktureSerializer(strukture,many=True)
-#         # struktures= struktureserializer.data
-#         # data.append({"struktures":struktures})
-#         # comment=Comment.objects.filter(product=productdate[0]["id"])
-#         # commentserializer = CommentSerializer(comment,many=True)
-#         # commentdate= commentserializer.data 
-#         # data.append({"comments":commentdate})
-
-#         # resivercomment=ResiverComment.objects.filter(resiver=commentdate[0]["id"])
-#         # resivercommentserializer = ResiverCommentSerializer(resivercomment,many=True)
-#         # resivercomment= resivercommentserializer.data
-#         # data.append({"resivercomments":resivercomment})
-        
-#         # return Response(data)
- 
-
-          
-# # class SearchInNewsView(viewsets.ModelViewSet):
-# #     queryset=News.objects.all()
-# #     serializer_class=NewsSerializer
-# #     def retrieve(self, request, *args, **kwargs):
-# #         name=kwargs['pk']
-# #         print(name)
-# #         news=self.queryset.filter(news_name__contains=name)
-# #         serializer = self.get_serializer(news,many=True)
-# #         return Response(serializer.data)

@@ -52,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model =User
+        model = User
         fields = ['phone','password']
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -76,11 +76,6 @@ class ClientphonecheckSerializer(serializers.Serializer):
     phone = serializers.RegexField("^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$")
     smscode = serializers.CharField(max_length=6)
 
-
-class Customerserializers(serializers.ModelSerializer):
-    class Meta:
-        model= Customer
-        fields="__all__"
 
 class Locationserializers(serializers.ModelSerializer):
     class Meta:
@@ -127,3 +122,5 @@ class ImagesReviewserializers(serializers.ModelSerializer):
     class Meta:
         model= ImagesReview
         fields="__all__"
+
+

@@ -12,15 +12,6 @@ class Phonesmscodecheck(models.Model):
     def __str__(self):
         return str(self.phone)
 
-
-
-
-class Customer(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
-    birthday=models.DateField(null=True)
-    def __str__(self):
-        return str(self.user.phone)
-
 class Location(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     latitude=models.CharField(max_length=200,null=True)
@@ -43,11 +34,7 @@ class Customercard(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 
-class Orders(models.Model):
-    user = models.ForeignKey(User,related_name="phoneW", on_delete= models.CASCADE)
-    location = models.ForeignKey(Location,on_delete=models.CASCADE)
-    order_date = models.DateTimeField(auto_now_add=True)
-    status = {
+status = {
         ('Start','Start'),
         ("To'lov","To'lov"),
         ('Buyurma','Buyurnama'),
@@ -55,9 +42,22 @@ class Orders(models.Model):
         ('Yetkazildi','Yetkazildi'),
         ('Buyurma bekor qilindi','Buyurma bekor qilindi'),
     }
+class Orders(models.Model):
+    user = models.ForeignKey(User,related_name="phoneW", on_delete= models.CASCADE)
+    location = models.ForeignKey(Location,on_delete=models.CASCADE)
+    order_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, default='Start',choices=status)
     def __str__(self):
         return f"{self.user.phone} <=> {self.order_date}"
+    @property
+    def day(self):
+        return pd.to_datetime(self.order_date).strftime("%m/%d/%Y")
+    @property
+    def time(self):
+        return pd.to_datetime(self.order_date).strftime("%H:%M:%S")
+
+
+
 class Order_details(models.Model):
     order = models.ForeignKey(Orders,on_delete=models.CASCADE)
     product = models.ForeignKey(Products,on_delete=models.CASCADE)

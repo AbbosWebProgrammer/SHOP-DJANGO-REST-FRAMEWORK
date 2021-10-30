@@ -58,6 +58,14 @@ class CreateProductsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class Main_page_promoserializers(serializers.ModelSerializer):
+    class Meta:
+        model= Main_page_promo
+        fields="__all__"
 
+class Main_page_bannerserializers(serializers.ModelSerializer):
+    class Meta:
+        model= Main_page_banner
+        fields="__all__"
 
 

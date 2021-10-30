@@ -8,6 +8,7 @@ from rest_framework import viewsets
 from knox.models import AuthToken
 from .serializer import * 
 from AuthAPP.models import Location
+import json
 from random import choice
 import requests
 class RegisterAPI(generics.GenericAPIView):
@@ -85,7 +86,7 @@ class ClientphoneView(generics.GenericAPIView):
                 )
         obj.smscode=password
         obj.save()
-        k=self.sendphonepasswod(phone[1:],password)
+        k=self.sendphonepassword(phone[1:],password)
         print(k)
         # k=dict(k)
         # print("waiting")
@@ -96,7 +97,7 @@ class ClientphoneView(generics.GenericAPIView):
 
 
 
-    def sendphonepasswod(self,phone,password):
+    def sendphonepassword(self,phone,password):
         url = "http://notify.eskiz.uz/api/message/sms/send"
         payload={'mobile_phone': f'{phone}',
         'message': f'{password}',
@@ -139,9 +140,7 @@ class ClientphonecheckView(generics.GenericAPIView):
          
 
 
-class CustomerView(viewsets.ModelViewSet):
-    queryset=Customer.objects.all()
-    serializer_class=Customerserializers
+
 class LocationView(viewsets.ModelViewSet):
     queryset=Location.objects.all()
     serializer_class=Locationserializers
@@ -154,6 +153,8 @@ class CustomercardView(viewsets.ModelViewSet):
     queryset=Customercard.objects.all()
     serializer_class= Customercardserializers
 
+
+
 class OrdersView(viewsets.ModelViewSet):
     queryset=Orders.objects.all()
     serializer_class= Ordersserializers
@@ -161,27 +162,43 @@ class OrdersView(viewsets.ModelViewSet):
         serializer=self.get_serializer(self.queryset,many=True)
         orders=[]
         for order in serializer.data:
-            userid=order['user']
-            user=User.objects.get(id=userid)
-
-            loc=order["location"]
-            location=Location.objects.get(id=loc)
-            lat=location.latitude
-            lang=location.longitude
-            
-
+            ord=Orders.objects.get(id=order["id"])
             d={
-                "id":order["id"],
-                "user":str(user.phone),
-                "location":f'''{lat}:{lang}''',
-                "status":order["status"],
-                "date":pd.to_datetime(order["order_date"]).strftime("%m/%d/%Y, %H:%M:%S"),
-
+                'id':ord.id,
+                'user':f'''{ord.user}''',
+                'location':f'''{ord.location.latitude}:{ord.location.longitude}''',
+                'status':ord.status,
+                'day': ord.day,
+                'time': ord.time,
             }
             orders.append(d)
-
         return Response({'orders':orders})
+    def retrieve(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        ordd = self.queryset.filter(id=id)
+        serializer = self.get_serializer(ordd,many=True)
+        order = serializer.data
+        order=order[0]
+        ord=Orders.objects.get(id=order["id"])
 
+        orders=[]
+        d={
+            'id':ord.id,
+            'user':f'''{ord.user}''',
+            'location':f'''{ord.location.latitude}:{ord.location.longitude}''',
+            'status':ord.status,
+            'day': ord.day,
+            'time': ord.time,
+        }
+        orders.append(d)
+        return Response({'order':orders})
+    def update(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        status=request.data.get("status")
+        order_status = self.queryset.get(id=id)
+        order_status.status=status
+        order_status.save()
+        return Response({'status':order_status.status})
             
 
 
@@ -189,6 +206,55 @@ class OrdersView(viewsets.ModelViewSet):
 class Order_detailsView(viewsets.ModelViewSet):
     queryset=Order_details.objects.all()
     serializer_class= Order_detailsserializers
+    def list(self, request, *args, **kwargs):
+        serializer=self.get_serializer(self.queryset,many=True)
+        orders_details=[]
+        for ordd in serializer.data:
+            orderdetail=Order_details.objects.get(id=ordd['id'])
+            d={
+                'id':orderdetail.id,
+                'order': f'''{orderdetail.order.user}''',
+                'category':f'''{orderdetail.productscolor.colorname}''',
+                'subcategory':f'''{orderdetail.product.subcategory}''',
+                'brand':f'''{orderdetail.product.brand}''',
+                'product': orderdetail.product.name,
+                'productscolor':orderdetail.productscolor.colorname,
+                'productsize': orderdetail.productsize.size,
+                'quantity': orderdetail.quantity,
+                'day': orderdetail.order.day,
+                'time': orderdetail.order.time,
+            }
+
+            orders_details.append(d)
+        return Response({'orders_details':orders_details})
+    def retrieve(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        orderd = self.queryset.filter(id=id)
+        serializer = self.get_serializer(orderd,many=True)
+        ordd = serializer.data
+        ordd=ordd[0]
+
+        order_detail=[]
+        orderdetail=Order_details.objects.get(id=ordd['id'])
+        d={
+            'id':orderdetail.id,
+            'order': f'''{orderdetail.order.user}''',
+            'category':f'''{orderdetail.productscolor.colorname}''',
+            'subcategory':f'''{orderdetail.product.subcategory}''',
+            'brand':f'''{orderdetail.product.brand}''',
+            'product': orderdetail.product.name,
+            'productscolor':orderdetail.productscolor.colorname,
+            'productsize': orderdetail.productsize.size,
+            'quantity': orderdetail.quantity,
+            'day': orderdetail.order.day,
+            'time': orderdetail.order.time,
+        }
+
+        order_detail.append(d)
+        return Response({'order_detail':order_detail})
+
+
+
 class Order_detailsByOrderIdView(viewsets.ModelViewSet):
     queryset=Order_details.objects.all()
     serializer_class= Order_detailsserializers
@@ -196,13 +262,30 @@ class Order_detailsByOrderIdView(viewsets.ModelViewSet):
         id = kwargs['pk']
         ordd = self.queryset.filter(order=id)
         serializer = self.get_serializer(ordd,many=True)
-        return Response(serializer.data)
+        orders_details=[]
+        for ordd in serializer.data:
+            orderdetail=Order_details.objects.get(id=ordd['id'])
+            d={
+                'id':orderdetail.id,
+                'order': f'''{orderdetail.order.user}''',
+                'category':f'''{orderdetail.productscolor.colorname}''',
+                'subcategory':f'''{orderdetail.product.subcategory}''',
+                'brand':f'''{orderdetail.product.brand}''',
+                'product': orderdetail.product.name,
+                'productscolor':orderdetail.productscolor.colorname,
+                'productsize': orderdetail.productsize.size,
+                'quantity': orderdetail.quantity,
+                'day': orderdetail.order.day,
+                'time': orderdetail.order.time,
+            }
+            orders_details.append(d)
+        return Response({'orders_details':orders_details})
+
+
 
 class OrdersByDayView(viewsets.ModelViewSet):
     queryset=Orders.objects.all()
     serializer_class= Ordersserializers
-
-
 
 class QuestionView(viewsets.ModelViewSet):
     queryset=Question.objects.all()
