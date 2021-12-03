@@ -9,35 +9,35 @@ class SubcategorySerializer(serializers.ModelSerializer):
     class Meta:
         model= Subcategory 
         fields="__all__"
+class SubsubcategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Subsubcategory 
+        fields="__all__"
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model= Brand 
         fields="__all__"
-class ProductsSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model= Products
+        model= Product
         fields="__all__"
-class DescproductSerializer(serializers.ModelSerializer):
+class DescriptionForProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model= Descproduct
+        model= DescriptionForProduct
         fields="__all__"
 
 class ProductColorSerializer(serializers.ModelSerializer):
     class Meta:
-        model= ProductsColor
-        fields="__all__"    
-
-class GetColorByProductIdSerializer(serializers.ModelSerializer):
-    class Meta:
-        model= ProductsColor
+        model= ProductColor
         fields="__all__"  
+
 class ProductSizeSerializer(serializers.ModelSerializer):
     class Meta:
         model= ProductSize
         fields="__all__"
-class ImagefilesSerializer(serializers.ModelSerializer):
+class ProductImageFileSerializer(serializers.ModelSerializer):
     class Meta:
-        model= Imagefiles
+        model= ProductImageFile
         fields="__all__"
 
 class ProductParamsCaptionSerializer(serializers.ModelSerializer):
@@ -45,27 +45,12 @@ class ProductParamsCaptionSerializer(serializers.ModelSerializer):
         model= ProductParamsCaption
         fields="__all__"
 
-class ProductParamsCaptionitemsSerializer(serializers.ModelSerializer):
+class ProductParamsCaptionitemSerializer(serializers.ModelSerializer):
     class Meta:
-        model= ProductParamsCaptionitems
+        model= ProductParamsCaptionitem
         fields="__all__"
 
-
-class CreateProductsSerializer(serializers.ModelSerializer):
-    user = ProductsSerializer(required=False)
-    class Meta:
-        model = ProductsColor
-        fields = '__all__'
-
-
-class Main_page_promoserializers(serializers.ModelSerializer):
-    class Meta:
-        model= Main_page_promo
-        fields="__all__"
-
-class Main_page_bannerserializers(serializers.ModelSerializer):
-    class Meta:
-        model= Main_page_banner
-        fields="__all__"
+class AddProductJsonSerializer(serializers.Serializer):
+    data = serializers.JSONField(required=True)
 
 

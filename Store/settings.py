@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+from django.utils.translation import ugettext_lazy as _
 from pathlib import Path
 import os
 
@@ -30,27 +30,27 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'knox.auth.TokenAuthentication',
     ]
 }
-CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'knox',
     'Shop',
     'AuthAPP',
     'accounts',
+    'Sitepages',
     'corsheaders',
-    'rest_framework',
-    'rest_framework.authtoken',
     'phonenumber_field',
+    'knox',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -96,10 +96,48 @@ WSGI_APPLICATION = 'Store.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd5lbk8n1s99mgg',
+        'USER': 'qrznwjduhqitwo',
+        'PASSWORD': 'eeb949a8e0a96615039169988a4c6b30774fdfccb8fbbd671e0484a4f3e0ca7f',
+        'HOST': 'ec2-107-23-41-227.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'Doniyor0277$alsafiauz',
+#         'USER': 'Doniyor0277',
+#         'PASSWORD': 'Buyukkompaniya1187',
+#         'HOST': 'Doniyor0277.mysql.pythonanywhere-services.com',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'alsafiadatabase',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Alsafiauz12345!',
+#         'HOST': 'alsafiauz.cuhish8tokj3.us-west-2.rds.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'alsafia1_alsafiadatabase',
+#         'USER': 'alsafia1_alsafiadmin',
+#         'PASSWORD': 'Alsafiauz12345!',
+#         'HOST': 'server2.ahost.uz',
+#         'PORT': '465',
+#     }
+# }
+
 
 
 # Password validation
@@ -145,10 +183,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-   os.path.join(BASE_DIR, 'static'),
-)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATICFILES_DIRS = (
+#    os.path.join(BASE_DIR, 'staticfiles'),
+# )
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 MEDIA_URL = '/images/'
@@ -159,3 +197,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'images')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+SMSTOKEN="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9ub3RpZnkuZXNraXoudXpcL2FwaVwvYXV0aFwvbG9naW4iLCJpYXQiOjE2MzYxMDk1NTQsImV4cCI6MTYzODcwMTU1NCwibmJmIjoxNjM2MTA5NTU0LCJqdGkiOiJNbzZtbXZsckh0eTNLSzZ1Iiwic3ViIjo1MDgsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.Ybj0EOBPWF69WVXLHoR9EkRKJfC9G8xMEq9J7LvKb5s"

@@ -1,11 +1,11 @@
-from rest_framework import serializers
-from .models import *
-from django.contrib.auth import get_user_model
-from .models import *
-User = get_user_model()
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from .models import *
+
+User = get_user_model()
+
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -24,16 +24,17 @@ class AuthTokenSerializer(serializers.Serializer):
     def validate(self, attrs):
         phone = attrs.get('phone')
         password = attrs.get('password')
-
+        print(phone)
+        print(password)
+        
         if phone and password:
+                      
             user = authenticate(request=self.context.get('request'),
                                 phone=phone, password=password)
 
-            # The authenticate call simply returns None for is_active=False
-            # users. (Assuming the default ModelBackend authentication
-            # backend.)
+            print(user)
             if not user:
-                msg = _('Unable to log in with provided credentials.')
+                msg = _('Phone or Password entered incorrectly..')
                 raise serializers.ValidationError(msg, code='authorization')
         else:
             msg = _('Must include "phone" and "password".')
@@ -42,14 +43,12 @@ class AuthTokenSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
-# User Serializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['phone','password']
-        extra_kwargs = {'password': {'write_only': True}}
 
-# Register Serializer
+
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -59,15 +58,23 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(validated_data['phone'],validated_data['password'])
         return user
+    
+
 class ChangePasswordSerializer(serializers.Serializer):
     model = User
 
-    """
-    Serializer for password change endpoint.
-    """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 
+    
+class ChangeUserInfoSerializer(serializers.Serializer):
+    model = User
+    username = serializers.CharField(required=True)
+    firstname = serializers.CharField(required=True)
+    lastname = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    birthday=serializers.DateField(required=True)
+    image=serializers.ImageField(required=True)
 
 class ClientphoneSerializer(serializers.Serializer):
     phone = serializers.RegexField("^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$")
@@ -77,50 +84,54 @@ class ClientphonecheckSerializer(serializers.Serializer):
     smscode = serializers.CharField(max_length=6)
 
 
-class Locationserializers(serializers.ModelSerializer):
+class LocationSerializers(serializers.ModelSerializer):
     class Meta:
         model= Location
-        fields=["user","latitude","longitude"]
+        fields="__all__"
 
-class CustomerLikeserializers(serializers.ModelSerializer):
+class GoodsThatTheCustomerLikesSerializer(serializers.ModelSerializer):
     class Meta:
-        model= CustomerLike
+        model= GoodsThatTheCustomerLikes
+        fields='__all__'
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Order
+        fields="__all__"
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= OrderDetail
         fields="__all__"
 
 
-class Customercardserializers(serializers.ModelSerializer):
+class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
-        model= Customercard
+        model= QuestionForProduct
         fields="__all__"
-
-class Ordersserializers(serializers.ModelSerializer):
-    class Meta:
-        model= Orders
-        fields="__all__"
-
-class Order_detailsserializers(serializers.ModelSerializer):
-    class Meta:
-        model= Order_details
-        fields="__all__"
-
-
-class Questionserializers(serializers.ModelSerializer):
-    class Meta:
-        model= Question
-        fields="__all__"
-class Answertoquestionserializers(serializers.ModelSerializer):
+class AnswertoquestionSerializer(serializers.ModelSerializer):
     class Meta:
         model= Answertoquestion
         fields="__all__"
 
-class Reviewserializers(serializers.ModelSerializer):
+class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model= Review
         fields="__all__"
 
-class ImagesReviewserializers(serializers.ModelSerializer):
+class ImagesReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model= ImagesReview
         fields="__all__"
 
+
+class OrderAndOrderDetailsJsonSerializer(serializers.Serializer):
+    data = serializers.JSONField(required=True)
+
+
+class TheSellerAddedAnOrderJsonSerializer(serializers.Serializer):
+    data = serializers.JSONField(required=True)
+
+class ReviewJsonSerializer(serializers.Serializer):
+    data = serializers.JSONField(required=True)
 
